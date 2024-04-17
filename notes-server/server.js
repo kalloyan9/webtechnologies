@@ -1,7 +1,7 @@
 var express = require('express');
-var expressModule = require('express'); // Import express module
-var ExpressRequest = expressModule.Request; // Extract Request from express module
-var ExpressResponse = expressModule.Response; // Extract Response from express module
+var expressModule = require('express');
+var ExpressRequest = expressModule.Request;
+var ExpressResponse = expressModule.Response;
 var fs = require('fs');
 var path = require('path');
 var app = express();
@@ -15,15 +15,35 @@ var HTTP_STATUS_INTERNAL_SERVER_ERROR = 500;
 if (!fs.existsSync(NOTES_FILE_PATH)) {
     fs.writeFileSync(NOTES_FILE_PATH, '[]');
 }
-app.get('/api/notes', function (req, res) {
+//app.get('/api/notes', (req, res) => {
+//  try {
+//    const data = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
+//    const notes = JSON.parse(data);
+//    res.status(HTTP_STATUS_OK).json(notes);
+//  } catch (error) {
+//    console.error('Error fetching notes:', error);
+//    res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send('Error fetching notes');
+//  }
+//});
+//
+app.get('/api/notes/:id', function (req, res) {
     try {
+        var id_1 = req.params.id; // Extract note ID from URL params
         var data = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
         var notes = JSON.parse(data);
-        res.status(HTTP_STATUS_OK).json(notes);
+        // Find the note with the specified ID
+        var note = notes.find(function (note) { return note.id === parseInt(id_1); });
+        if (!note) {
+            // If note with specified ID is not found, return 404
+            res.status(HTTP_STATUS_NOT_FOUND).send('Note not found');
+            return;
+        }
+        // If note is found, return it
+        res.status(HTTP_STATUS_OK).json(note);
     }
     catch (error) {
-        console.error('Error fetching notes:', error);
-        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send('Error fetching notes');
+        console.error('Error fetching note:', error);
+        res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send('Error fetching note');
     }
 });
 app.post('/api/notes', function (req, res) {
@@ -43,11 +63,11 @@ app.post('/api/notes', function (req, res) {
 });
 app.put('/api/notes/:id', function (req, res) {
     try {
-        var id_1 = req.params.id;
+        var id_2 = req.params.id;
         var content = req.body.content;
         var data = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
         var notes = JSON.parse(data);
-        var index = notes.findIndex(function (note) { return note.id === parseInt(id_1); });
+        var index = notes.findIndex(function (note) { return note.id === parseInt(id_2); });
         if (index !== -1) {
             notes[index].content = content;
             fs.writeFileSync(NOTES_FILE_PATH, JSON.stringify(notes));
@@ -64,10 +84,10 @@ app.put('/api/notes/:id', function (req, res) {
 });
 app.delete('/api/notes/:id', function (req, res) {
     try {
-        var id_2 = req.params.id;
+        var id_3 = req.params.id;
         var data = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
         var notes = JSON.parse(data);
-        var filteredNotes = notes.filter(function (note) { return note.id !== parseInt(id_2); });
+        var filteredNotes = notes.filter(function (note) { return note.id !== parseInt(id_3); });
         if (filteredNotes.length < notes.length) {
             fs.writeFileSync(NOTES_FILE_PATH, JSON.stringify(filteredNotes));
             res.sendStatus(HTTP_STATUS_NO_CONTENT);

@@ -20,16 +20,26 @@ if (!fs.existsSync(NOTES_FILE_PATH)) {
   fs.writeFileSync(NOTES_FILE_PATH, '[]');
 }
 
-app.get('/api/notes', (req, res) => {
+app.get('/api/notes/:id', (req, res) => {
   try {
+    const { id } = req.params;
     const data = fs.readFileSync(NOTES_FILE_PATH, 'utf-8');
     const notes = JSON.parse(data);
-    res.status(HTTP_STATUS_OK).json(notes);
+    
+    const note = notes.find(note => note.id === parseInt(id));
+
+    if (!note) {
+      res.status(HTTP_STATUS_NOT_FOUND).send('Note not found');
+      return;
+    }
+
+    res.status(HTTP_STATUS_OK).json(note);
   } catch (error) {
-    console.error('Error fetching notes:', error);
-    res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send('Error fetching notes');
+    console.error('Error fetching note:', error);
+    res.status(HTTP_STATUS_INTERNAL_SERVER_ERROR).send('Error fetching note');
   }
 });
+
 
 app.post('/api/notes', (req, res) => {
   try {
