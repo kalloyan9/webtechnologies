@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Interactive Chat and Spotify Search</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            text-align: center;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+        }
+        input[type="text"], select {
+            padding: 10px;
+            margin: 10px;
+            width: 300px;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            font-size: 16px;
+        }
+        button {
+            padding: 10px 20px;
+            border-radius: 5px;
+            border: none;
+            background-color: #007bff;
+            color: #fff;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        .result-box {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        img {
+            max-width: 100%;
+            height: auto;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h2>Interactive Chat and Spotify Search</h2>
+        <input type="text" id="userInput" placeholder="Enter your question...">
+        <select id="chatOptions">
+            <option value="gpt">Chat GPT</option>
+            <option value="davinci">Davinci</option>
+            <option value="tts">Text-to-Speech</option>
+        </select>
+        <button onclick="askChat()">Ask Chat</button>
+        <div class="result-box" id="chatResult"></div>
+
+        <input type="text" id="spotifyQuery" placeholder="Enter your search query for Spotify...">
+        <select id="spotifyOptions">
+            <option value="track">Track</option>
+            <option value="album">Album</option>
+            <option value="artist">Artist</option>
+            <option value="playlist">Playlist</option>
+        </select>
+        <button onclick="searchSpotify()">Search in Spotify</button>
+        <input type="text" id="spotifyResult" placeholder="Search result...">
+        <div id="spotifyImages"></div>
+    </div>
+
+    <script>
+        function askChat() {
+            var userInput = document.getElementById("userInput").value;
+            var selectedOption = document.getElementById("chatOptions").value;
+            var chatResult = document.getElementById("chatResult");
+
+            // You would implement code here to interact with the selected chat option
+            // For demonstration purposes, I'll just display a placeholder response here
+            var response = "This is a placeholder response from " + selectedOption;
+            chatResult.innerHTML = response;
+        }
+
+        function searchSpotify() {
+            var query = document.getElementById("spotifyQuery").value;
+            var selectedOption = document.getElementById("spotifyOptions").value;
+            var spotifyResult = document.getElementById("spotifyResult");
+            // You would implement code here to search the Spotify API based on the query and selected option
+            // For demonstration purposes, I'll just display a placeholder result here
+            var result = "This is a placeholder result from Spotify for " + selectedOption + " with query: " + query;
+            spotifyResult.value = result;
+
+            // Clear any previous images
+            document.getElementById("spotifyImages").innerHTML = "";
+
+            // Display placeholder images
+            var images = ['https://via.placeholder.com/150', 'https://via.placeholder.com/150'];
+            images.forEach(function(imageSrc) {
+                var img = document.createElement("img");
+                img.src = imageSrc;
+                document.getElementById("spotifyImages").appendChild(img);
+            });
+        }
+    </script>
+</body>
+</html>
