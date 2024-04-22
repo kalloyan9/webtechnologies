@@ -46,7 +46,7 @@
             padding: 10px;
             border: 1px solid #ccc;
             border-radius: 5px;
-            width: 80%;
+            width: 100%;
             margin-left: auto;
             margin-right: auto;
         }
@@ -59,7 +59,7 @@
 </head>
 <body>
     <div class="container">
-        <h2>Interactive Chat and Spotify Search</h2>
+        <h2>Demo of Chat GPT and Spotify APIs</h2>
         <input type="text" id="userInput" placeholder="Enter your question...">
         <select id="chatOptions">
             <option value="gpt">Chat GPT</option>
@@ -69,7 +69,7 @@
         <button onclick="askChat()">Ask Chat</button>
         <div class="result-box" id="chatResult"></div>
 
-        <input type="text" id="spotifyQuery" placeholder="Enter your search query for Spotify...">
+        <input type="text" id="spotifyQuery" placeholder="Enter your search for Spotify...">
         <select id="spotifyOptions">
             <option value="track">Track</option>
             <option value="album">Album</option>
@@ -77,7 +77,8 @@
             <option value="playlist">Playlist</option>
         </select>
         <button onclick="searchSpotify()">Search in Spotify</button>
-        <input type="text" id="spotifyResult" placeholder="Search result...">
+
+        <div class="result-box" id="spotifyResult"></div>
         <div id="spotifyImages"></div>
     </div>
 
@@ -87,31 +88,52 @@
             var selectedOption = document.getElementById("chatOptions").value;
             var chatResult = document.getElementById("chatResult");
 
-            // You would implement code here to interact with the selected chat option
-            // For demonstration purposes, I'll just display a placeholder response here
             var response = "This is a placeholder response from " + selectedOption;
             chatResult.innerHTML = response;
+
+
+            if (selectedOption === 'gpt') {
+
+            } else if (selectedOption === 'davinci') {
+                var imageLink = 'https://scontent-sof1-1.xx.fbcdn.net/v/t39.30808-6/369163536_3633104593681821_2044460219820089545_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=G6vHGY72aSEAb4wngIe&_nc_ht=scontent-sof1-1.xx&oh=00_AfChHmZ6EM6JqiTnPoBKcDJ0wB5ri7u-fwwI3M1cYN6vWg&oe=662BDB78';
+                var img = document.createElement("img");
+                img.src = imageLink;
+                chatResult.appendChild(img);
+            } else if (selectedOption === 'tts') {
+
+            } else {
+                assert("assert");
+            }
+
+
         }
 
         function searchSpotify() {
             var query = document.getElementById("spotifyQuery").value;
             var selectedOption = document.getElementById("spotifyOptions").value;
             var spotifyResult = document.getElementById("spotifyResult");
-            // You would implement code here to search the Spotify API based on the query and selected option
-            // For demonstration purposes, I'll just display a placeholder result here
+
             var result = "This is a placeholder result from Spotify for " + selectedOption + " with query: " + query;
-            spotifyResult.value = result;
+            spotifyResult.innerHTML = result;
 
-            // Clear any previous images
-            document.getElementById("spotifyImages").innerHTML = "";
 
-            // Display placeholder images
-            var images = ['https://via.placeholder.com/150', 'https://via.placeholder.com/150'];
-            images.forEach(function(imageSrc) {
-                var img = document.createElement("img");
-                img.src = imageSrc;
-                document.getElementById("spotifyImages").appendChild(img);
-            });
+            var imageLink = 'https://scontent-sof1-1.xx.fbcdn.net/v/t39.30808-6/369163536_3633104593681821_2044460219820089545_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=G6vHGY72aSEAb4wngIe&_nc_ht=scontent-sof1-1.xx&oh=00_AfChHmZ6EM6JqiTnPoBKcDJ0wB5ri7u-fwwI3M1cYN6vWg&oe=662BDB78';
+            var img = document.createElement("img");
+            img.src = imageLink;
+            document.getElementById("spotifyImages").appendChild(img);
+
+            if (selectedOption === 'track') {
+
+            } else if (selectedOption === 'album') {
+
+            } else if (selectedOption === 'artist') {
+
+            } else if (selectedOption === 'playlist') {
+
+            } else {
+                assert("assert");
+            }
+
         }
     </script>
 </body>
