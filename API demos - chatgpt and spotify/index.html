@@ -91,18 +91,11 @@
             var response = "This is a placeholder response from " + selectedOption;
             chatResult.innerHTML = response;
 
-
-            if (selectedOption === 'gpt') {
-
-            } else if (selectedOption === 'davinci') {
+            if (selectedOption === 'davinci') {
                 var imageLink = 'https://scontent-sof1-1.xx.fbcdn.net/v/t39.30808-6/369163536_3633104593681821_2044460219820089545_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=G6vHGY72aSEAb4wngIe&_nc_ht=scontent-sof1-1.xx&oh=00_AfChHmZ6EM6JqiTnPoBKcDJ0wB5ri7u-fwwI3M1cYN6vWg&oe=662BDB78';
                 var img = document.createElement("img");
                 img.src = imageLink;
                 chatResult.appendChild(img);
-            } else if (selectedOption === 'tts') {
-
-            } else {
-                assert("assert");
             }
         }
 
@@ -110,26 +103,27 @@
             var query = document.getElementById("spotifyQuery").value;
             var selectedOption = document.getElementById("spotifyOptions").value;
             var spotifyResult = document.getElementById("spotifyResult");
+            var spotifyImages = document.getElementById("spotifyImages");
 
             var result = "This is a placeholder result from Spotify for " + selectedOption + " with query: " + query;
             spotifyResult.innerHTML = result;
 
+            // Clear previous images
+            spotifyImages.innerHTML = "";
 
             var imageLink = 'https://scontent-sof1-1.xx.fbcdn.net/v/t39.30808-6/369163536_3633104593681821_2044460219820089545_n.jpg?_nc_cat=104&ccb=1-7&_nc_sid=5f2048&_nc_ohc=G6vHGY72aSEAb4wngIe&_nc_ht=scontent-sof1-1.xx&oh=00_AfChHmZ6EM6JqiTnPoBKcDJ0wB5ri7u-fwwI3M1cYN6vWg&oe=662BDB78';
             var img = document.createElement("img");
             img.src = imageLink;
-            document.getElementById("spotifyImages").appendChild(img);
+            spotifyImages.appendChild(img);
 
             if (selectedOption === 'track') {
-
+                // Implement track search
             } else if (selectedOption === 'album') {
-
+                // Implement album search
             } else if (selectedOption === 'artist') {
-
+                // Implement artist search
             } else if (selectedOption === 'playlist') {
-
-            } else {
-                assert("assert");
+                // Implement playlist search
             }
         }
     </script>
