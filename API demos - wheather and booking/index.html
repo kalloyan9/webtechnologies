@@ -14,6 +14,7 @@
             justify-content: center;
             align-items: center;
             height: 100vh;
+            overflow-y: auto; /* Enable vertical scrolling */
         }
 
         .container {
@@ -81,6 +82,10 @@
             margin-top: 20px;
             text-align: center;
         }
+
+        .detail {
+            margin-top: 10px;
+        }
     </style>
 </head>
 <body>
@@ -143,26 +148,35 @@
 
             var weatherText = "<h2>Weather for the next 5 days:</h2>";
 
-            // Iterate over intervals and collect temperature values
-            var temperatureValues = intervals.map(interval => interval.values.temperature || "-");
-
             // Group temperature values by day
             var days = {};
             intervals.forEach(interval => {
                 var day = new Date(interval.startTime).toLocaleDateString('en-US', { weekday: 'long' });
+                var time = new Date(interval.startTime).toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit' });
+                var temperature = interval.values.temperature || "-";
+                var rainIntensity = interval.values.rainIntensity || "-";
+                var snowIntensity = interval.values.snowIntensity || "-";
+                var snowDepth = interval.values.snowDepth || "-";
+                var isRaining = rainIntensity !== "-" ? "Yes" : "No";
+                var isSnowing = snowIntensity !== "-" ? "Yes" : "No";
+                var entry = "<strong>" + day + "</strong><br>" + time + ": " + temperature + " °C<br>Rain Intensity: " + rainIntensity + "<br>Snow Intensity: " + snowIntensity + "<br>Snow Depth: " + snowDepth + "<br>Raining: " + isRaining + "<br>Snowing: " + isSnowing;
                 if (!days[day]) {
                     days[day] = [];
                 }
-                days[day].push(interval.values.temperature || "-");
+                days[day].push(entry);
             });
 
             // Print weather for each day
             Object.keys(days).forEach(day => {
-                weatherText += "<p><strong>" + day + ":</strong> " + days[day].join(", ") + " °C</p>";
+                weatherText += "<div class='detail'>" + days[day].join("<br>") + "</div>";
             });
 
             weatherInfoDiv.innerHTML = weatherText;
         }
     </script>
+	
+	<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d47223.32774056253!2d23.535266108040993!3d42.2900921899973!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x14ab3d28d58b6695%3A0xd221ba22bc7edfd2!2sSkiing%20Borovets!5e0!3m2!1sbg!2sbg!4v1713980025423!5m2!1sbg!2sbg" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+	<iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d11781.951160988456!2d27.686105076532208!3d42.41735097827864!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40a6c7f5573ae503%3A0xf46ad844a446db20!2zODEzMCDQodC-0LfQvtC_0L7Quw!5e0!3m2!1sbg!2sbg!4v1713980159662!5m2!1sbg!2sbg" width="600" height="450" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
 </body>
 </html>
