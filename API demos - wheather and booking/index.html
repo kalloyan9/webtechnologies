@@ -103,17 +103,17 @@
     <script>
         function checkWeather() {
             var location = document.getElementById("location").value;
-            var currentTime = new Date();
             var startTime = "now";
-			var endTime = "nowPlus8h";
+            var endTime = "nowPlus5d";
 
             // Prepare HTTP request data
             var requestData = {
                 location: location,
                 fields: ["temperature", "snowIntensity", "rainIntensity", "snowDepth"],
                 units: "metric",
-                timesteps: ["1d"],
-                startTime: startTime
+                timesteps: ["1h"],
+                startTime: startTime,
+                endTime: endTime
             };
 
             // Perform HTTP request
@@ -130,69 +130,38 @@
             .then(data => {
                 // Handle response data and display weather information
                 console.log(data);
-                displayWeatherInfo(data, location);
+                displayWeatherInfo(data);
             })
             .catch(error => {
                 console.error('Error:', error);
             });
         }
 
-        function displayWeatherInfo(data, location) {
+        function displayWeatherInfo(data) {
             var weatherInfoDiv = document.getElementById("weatherInfo");
-            var recommendationDiv = document.getElementById("recommendation");
-            weatherInfoDiv.innerHTML = "";
-            recommendationDiv.innerHTML = "";
+            var intervals = data.data.timelines[0].intervals;
 
-            var timeline = data.data.timelines[0];
-            var interval = timeline.intervals[0];
+            var weatherText = "<h2>Weather for the next 5 days:</h2>";
 
-            var time = new Date(interval.startTime).toLocaleDateString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit' });
+            // Iterate over intervals and collect temperature values
+            var temperatureValues = intervals.map(interval => interval.values.temperature || "-");
 
-            var temperature = interval.values.temperature || "-";
-            var rainIntensity = interval.values.rainIntensity || "-";
-            var snowIntensity = interval.values.snowIntensity || "-";
-            var snowDepth = interval.values.snowDepth || "-";
-
-            var weatherText = `
-                <p><strong>Time:</strong> ${time}</p>
-                <p><strong>Temperature:</strong> ${temperature} °C</p>
-                <p><strong>Rain Intensity:</strong> ${rainIntensity}</p>
-                <p><strong>Snow Intensity:</strong> ${snowIntensity}</p>
-                <p><strong>Snow Depth:</strong> ${snowDepth}</p>
-                <hr>
-            `;
-            weatherInfoDiv.innerHTML += weatherText;
-
-            // Display recommendations
-            if (location === "42.2670,23.6018") { // Borovets
-                if (isSkiingRecommended(interval)) {
-                    recommendationDiv.innerHTML = "<p>Skiing is recommended!</p>";
-                } else {
-                    recommendationDiv.innerHTML = "<p>Skiing is not recommended.</p>";
+            // Group temperature values by day
+            var days = {};
+            intervals.forEach(interval => {
+                var day = new Date(interval.startTime).toLocaleDateString('en-US', { weekday: 'long' });
+                if (!days[day]) {
+                    days[day] = [];
                 }
-            } else if (location === "42.4171,27.6957") { // Sozopol
-                if (isBeachRecommended(interval)) {
-                    recommendationDiv.innerHTML = "<p>Going to the beach is recommended!</p>";
-                } else {
-                    recommendationDiv.innerHTML = "<p>Going to the beach is not recommended.</p>";
-                }
-            }
-        }
+                days[day].push(interval.values.temperature || "-");
+            });
 
-        function isSkiingRecommended(interval) {
-            var snowDepth = interval.values.snowDepth || 0;
-            var snowIntensity = interval.values.snowIntensity || 0;
-            var rainIntensity = interval.values.rainIntensity || 0;
-            var temperature = interval.values.temperature || 0;
+            // Print weather for each day
+            Object.keys(days).forEach(day => {
+                weatherText += "<p><strong>" + day + ":</strong> " + days[day].join(", ") + " °C</p>";
+            });
 
-            return snowDepth >= 20 && snowIntensity === 0 && rainIntensity === 0 && temperature <= 10;
-        }
-
-        function isBeachRecommended(interval) {
-            var rainIntensity = interval.values.rainIntensity || 0;
-            var temperature = interval.values.temperature || 0;
-
-            return temperature >= 25 && rainIntensity === 0;
+            weatherInfoDiv.innerHTML = weatherText;
         }
     </script>
 </body>
