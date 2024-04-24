@@ -93,10 +93,6 @@
                     <option value="42.2670,23.6018">Borovets</option>
                     <option value="42.4171,27.6957">Sozopol</option>
                 </select>
-                <label for="day">Day of the Week:</label>
-                <select id="day">
-                    <!-- Options will be populated dynamically -->
-                </select>
                 <button type="button" onclick="checkWeather()">Check Weather</button>
             </form>
             <div id="weatherInfo"></div>
@@ -105,42 +101,11 @@
     </div>
 
     <script>
-        function populateDaysDropdown() {
-            var daysDropdown = document.getElementById("day");
-            var daysOfWeek = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
-            var today = new Date();
-            var currentDayOfWeekIndex = today.getDay();
-            var currentDayOfWeek = daysOfWeek[currentDayOfWeekIndex];
-
-            daysDropdown.innerHTML = ""; // Clear existing options
-            for (var i = currentDayOfWeekIndex; i < 7; i++) {
-                var option = document.createElement("option");
-                option.value = daysOfWeek[i].toLowerCase();
-                option.text = daysOfWeek[i];
-                daysDropdown.appendChild(option);
-            }
-            for (var j = 0; j < currentDayOfWeekIndex; j++) {
-                var option = document.createElement("option");
-                option.value = daysOfWeek[j].toLowerCase();
-                option.text = daysOfWeek[j];
-                daysDropdown.appendChild(option);
-            }
-        }
-
-        // Populate days dropdown on page load
-        populateDaysDropdown();
-
         function checkWeather() {
             var location = document.getElementById("location").value;
-            var dayOfWeek = document.getElementById("day").value;
             var currentTime = new Date();
             var startTime = "now";
-            var endTime = "nowPlus12h";
-
-            // Adjust endTime based on selected day
-            if (dayOfWeek.toLowerCase() !== currentTime.toLocaleString('en', { weekday: 'long' }).toLowerCase()) {
-                endTime = "nowPlus1d";
-            }
+			var endTime = "nowPlus8h";
 
             // Prepare HTTP request data
             var requestData = {
@@ -148,8 +113,7 @@
                 fields: ["temperature", "snowIntensity", "rainIntensity", "snowDepth"],
                 units: "metric",
                 timesteps: ["1d"],
-                startTime: startTime,
-                endTime: endTime
+                startTime: startTime
             };
 
             // Perform HTTP request
@@ -180,39 +144,34 @@
             recommendationDiv.innerHTML = "";
 
             var timeline = data.data.timelines[0];
-            var intervals = timeline.intervals;
+            var interval = timeline.intervals[0];
 
-            var skiingRecommended = isSkiingRecommended(timeline, location);
-            var beachRecommended = isBeachRecommended(timeline, location);
+            var time = new Date(interval.startTime).toLocaleDateString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit' });
 
-            intervals.forEach(interval => {
-                var time = new Date(interval.startTime).toLocaleDateString('en-US', { weekday: 'long', hour: '2-digit', minute: '2-digit' });
+            var temperature = interval.values.temperature || "-";
+            var rainIntensity = interval.values.rainIntensity || "-";
+            var snowIntensity = interval.values.snowIntensity || "-";
+            var snowDepth = interval.values.snowDepth || "-";
 
-                var temperature = interval.values.temperature || "-";
-                var rainIntensity = interval.values.rainIntensity || "-";
-                var snowIntensity = interval.values.snowIntensity || "-";
-                var snowDepth = interval.values.snowDepth || "-";
-
-                var weatherText = `
-                    <p><strong>Time:</strong> ${time}</p>
-                    <p><strong>Temperature:</strong> ${temperature} °C</p>
-                    <p><strong>Rain Intensity:</strong> ${rainIntensity}</p>
-                    <p><strong>Snow Intensity:</strong> ${snowIntensity}</p>
-                    <p><strong>Snow Depth:</strong> ${snowDepth}</p>
-                    <hr>
-                `;
-                weatherInfoDiv.innerHTML += weatherText;
-            });
+            var weatherText = `
+                <p><strong>Time:</strong> ${time}</p>
+                <p><strong>Temperature:</strong> ${temperature} °C</p>
+                <p><strong>Rain Intensity:</strong> ${rainIntensity}</p>
+                <p><strong>Snow Intensity:</strong> ${snowIntensity}</p>
+                <p><strong>Snow Depth:</strong> ${snowDepth}</p>
+                <hr>
+            `;
+            weatherInfoDiv.innerHTML += weatherText;
 
             // Display recommendations
             if (location === "42.2670,23.6018") { // Borovets
-                if (skiingRecommended) {
+                if (isSkiingRecommended(interval)) {
                     recommendationDiv.innerHTML = "<p>Skiing is recommended!</p>";
                 } else {
                     recommendationDiv.innerHTML = "<p>Skiing is not recommended.</p>";
                 }
             } else if (location === "42.4171,27.6957") { // Sozopol
-                if (beachRecommended) {
+                if (isBeachRecommended(interval)) {
                     recommendationDiv.innerHTML = "<p>Going to the beach is recommended!</p>";
                 } else {
                     recommendationDiv.innerHTML = "<p>Going to the beach is not recommended.</p>";
@@ -220,43 +179,20 @@
             }
         }
 
-        function isSkiingRecommended(timeline, location) {
-            var snowDepthValues = timeline.intervals.map(interval => interval.values.snowDepth);
-            var snowIntensityValues = timeline.intervals.map(interval => interval.values.snowIntensity);
-            var maxSnowDepth = Math.max(...snowDepthValues);
-            var maxSnowIntensity = Math.max(...snowIntensityValues);
+        function isSkiingRecommended(interval) {
+            var snowDepth = interval.values.snowDepth || 0;
+            var snowIntensity = interval.values.snowIntensity || 0;
+            var rainIntensity = interval.values.rainIntensity || 0;
+            var temperature = interval.values.temperature || 0;
 
-            var rainIntensityValues = timeline.intervals.map(interval => interval.values.rainIntensity);
-            var maxRainIntensity = Math.max(...rainIntensityValues);
-
-            var temperatureValues = timeline.intervals.map(interval => interval.values.temperature);
-            var minTemperature = Math.min(...temperatureValues);
-
-            if (location === "42.2670,23.6018") { // Borovets
-                return maxSnowDepth >= 20 && maxSnowIntensity === 0 && maxRainIntensity === 0 && minTemperature <= 10;
-            } else {
-                return false;
-            }
+            return snowDepth >= 20 && snowIntensity === 0 && rainIntensity === 0 && temperature <= 10;
         }
 
-        function isBeachRecommended(timeline, location) {
-            var rainIntensityValues = timeline.intervals.map(interval => interval.values.rainIntensity);
-            var maxRainIntensity = Math.max(...rainIntensityValues);
+        function isBeachRecommended(interval) {
+            var rainIntensity = interval.values.rainIntensity || 0;
+            var temperature = interval.values.temperature || 0;
 
-            var temperatureValues = timeline.intervals.map(interval => interval.values.temperature);
-            var maxTemperature = Math.max(...temperatureValues);
-
-            var snowDepthValues = timeline.intervals.map(interval => interval.values.snowDepth);
-            var maxSnowDepth = Math.max(...snowDepthValues);
-
-            var snowIntensityValues = timeline.intervals.map(interval => interval.values.snowIntensity);
-            var maxSnowIntensity = Math.max(...snowIntensityValues);
-
-            if (location === "42.4171,27.6957") { // Sozopol
-                return maxTemperature >= 25 && maxRainIntensity === 0 && maxSnowDepth === 0 && maxSnowIntensity === 0;
-            } else {
-                return false;
-            }
+            return temperature >= 25 && rainIntensity === 0;
         }
     </script>
 </body>
