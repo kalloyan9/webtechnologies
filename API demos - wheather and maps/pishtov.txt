@@ -1,0 +1,12 @@
+google maps api:
+AIzaSyBfDjoMq6EKByMLNcqyNZ33UCluZLiNH2U
+
+https://maps.googleapis.com/maps/api/geocode/json?address=Borovets+Bulgaria&key=AIzaSyBfDjoMq6EKByMLNcqyNZ33UCluZLiNH2U
+https://maps.googleapis.com/maps/api/geocode/json?latlng=42.2670,23.6018&key=AIzaSyBfDjoMq6EKByMLNcqyNZ33UCluZLiNH2U
+
+
+
+
+
+weather api:
+https://app.tomorrow.io/home
