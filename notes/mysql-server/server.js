@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 var express = require("express");
-// import express, { Request, Response } from 'express';
 var mysql = require("mysql2/promise");
 var app = express();
 var PORT = 3000;
@@ -70,7 +69,7 @@ app.post('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0
             case 3:
                 result = (_b.sent())[0];
                 connection.release(); // Release connection back to the pool
-                insertId = result === null || result === void 0 ? void 0 : result.insertId;
+                insertId = result.insertId;
                 if (insertId) {
                     res.status(201).json({ message: 'Note created successfully', noteId: insertId });
                 }
@@ -82,6 +81,131 @@ app.post('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0
                 error_1 = _b.sent();
                 console.error('Error inserting note:', error_1);
                 res.status(500).json({ message: 'Error inserting note' });
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+// Endpoint to handle GET requests to fetch all notes
+app.get('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var connection, rows, error_2;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                _a.trys.push([0, 3, , 4]);
+                return [4 /*yield*/, pool.getConnection()];
+            case 1:
+                connection = _a.sent();
+                return [4 /*yield*/, connection.query('SELECT * FROM NOTES')];
+            case 2:
+                rows = (_a.sent())[0];
+                connection.release(); // Release connection back to the pool
+                res.status(200).json(rows);
+                return [3 /*break*/, 4];
+            case 3:
+                error_2 = _a.sent();
+                console.error('Error fetching notes:', error_2);
+                res.status(500).json({ message: 'Error fetching notes' });
+                return [3 /*break*/, 4];
+            case 4: return [2 /*return*/];
+        }
+    });
+}); });
+// Endpoint to handle GET requests to fetch a note by ID
+app.get('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, connection, rows, error_3;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                noteId = req.params.id;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, pool.getConnection()];
+            case 2:
+                connection = _a.sent();
+                return [4 /*yield*/, connection.query('SELECT * FROM NOTES WHERE id = ?', [noteId])];
+            case 3:
+                rows = (_a.sent())[0];
+                connection.release(); // Release connection back to the pool
+                if (rows.length === 1) {
+                    res.status(200).json(rows[0]);
+                }
+                else {
+                    res.status(404).json({ message: 'Note not found' });
+                }
+                return [3 /*break*/, 5];
+            case 4:
+                error_3 = _a.sent();
+                console.error('Error fetching note:', error_3);
+                res.status(500).json({ message: 'Error fetching note' });
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+// Endpoint to handle PUT requests to update a note by ID
+app.put('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, _a, title, content, author, connection, result, error_4;
+    return __generator(this, function (_b) {
+        switch (_b.label) {
+            case 0:
+                noteId = req.params.id;
+                _a = req.body, title = _a.title, content = _a.content, author = _a.author;
+                _b.label = 1;
+            case 1:
+                _b.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, pool.getConnection()];
+            case 2:
+                connection = _b.sent();
+                return [4 /*yield*/, connection.query('UPDATE NOTES SET title = ?, content = ?, author = ? WHERE id = ?', [title, content, author, noteId])];
+            case 3:
+                result = (_b.sent())[0];
+                connection.release(); // Release connection back to the pool
+                if (result.affectedRows === 1) {
+                    res.status(200).json({ message: 'Note updated successfully' });
+                }
+                else {
+                    res.status(404).json({ message: 'Note not found or no changes made' });
+                }
+                return [3 /*break*/, 5];
+            case 4:
+                error_4 = _b.sent();
+                console.error('Error updating note:', error_4);
+                res.status(500).json({ message: 'Error updating note' });
+                return [3 /*break*/, 5];
+            case 5: return [2 /*return*/];
+        }
+    });
+}); });
+// Endpoint to handle DELETE requests to delete a note by ID
+app.delete('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteId, connection, result, error_5;
+    return __generator(this, function (_a) {
+        switch (_a.label) {
+            case 0:
+                noteId = req.params.id;
+                _a.label = 1;
+            case 1:
+                _a.trys.push([1, 4, , 5]);
+                return [4 /*yield*/, pool.getConnection()];
+            case 2:
+                connection = _a.sent();
+                return [4 /*yield*/, connection.query('DELETE FROM NOTES WHERE id = ?', [noteId])];
+            case 3:
+                result = (_a.sent())[0];
+                connection.release(); // Release connection back to the pool
+                if (result.affectedRows === 1) {
+                    res.status(200).json({ message: 'Note deleted successfully' });
+                }
+                else {
+                    res.status(404).json({ message: 'Note not found or already deleted' });
+                }
+                return [3 /*break*/, 5];
+            case 4:
+                error_5 = _a.sent();
+                console.error('Error deleting note:', error_5);
+                res.status(500).json({ message: 'Error deleting note' });
                 return [3 /*break*/, 5];
             case 5: return [2 /*return*/];
         }
