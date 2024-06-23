@@ -54,19 +54,25 @@ var pool = mysql.createPool({
 app.use(express.json());
 // Endpoint to handle POST requests to create a note
 app.post('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var _a, title, content, author, connection, result, insertId, error_1;
+    var _a, title, content, author, connection, userRows, result, insertId, error_1;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
                 _a = req.body, title = _a.title, content = _a.content, author = _a.author;
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 4, , 5]);
+                _b.trys.push([1, 5, , 6]);
                 return [4 /*yield*/, pool.getConnection()];
             case 2:
                 connection = _b.sent();
-                return [4 /*yield*/, connection.query('INSERT INTO NOTES (title, content, author) VALUES (?, ?, ?)', [title, content, author])];
+                return [4 /*yield*/, connection.query('SELECT * FROM USERS WHERE username = ?', [author])];
             case 3:
+                userRows = (_b.sent())[0];
+                if (userRows.length === 0) {
+                    return [2 /*return*/, res.status(400).json({ message: "Author '".concat(author, "' does not exist") })];
+                }
+                return [4 /*yield*/, connection.query('INSERT INTO NOTES (title, content, author) VALUES (?, ?, ?)', [title, content, author])];
+            case 4:
                 result = (_b.sent())[0];
                 connection.release(); // Release connection back to the pool
                 insertId = result.insertId;
@@ -76,13 +82,13 @@ app.post('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0
                 else {
                     throw new Error('Insert failed or insertId not available');
                 }
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 6];
+            case 5:
                 error_1 = _b.sent();
                 console.error('Error inserting note:', error_1);
                 res.status(500).json({ message: 'Error inserting note' });
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });
@@ -96,7 +102,7 @@ app.get('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0,
                 return [4 /*yield*/, pool.getConnection()];
             case 1:
                 connection = _a.sent();
-                return [4 /*yield*/, connection.query('SELECT * FROM NOTES')];
+                return [4 /*yield*/, connection.query('SELECT * FROM NOTES ORDER BY author')];
             case 2:
                 rows = (_a.sent())[0];
                 connection.release(); // Release connection back to the pool
@@ -111,20 +117,20 @@ app.get('/notes', function (req, res) { return __awaiter(void 0, void 0, void 0,
         }
     });
 }); });
-// Endpoint to handle GET requests to fetch a note by ID
-app.get('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteId, connection, rows, error_3;
+// Endpoint to handle GET requests to fetch a note by title
+app.get('/notes/title/:title', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteTitle, connection, rows, error_3;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                noteId = req.params.id;
+                noteTitle = req.params.title;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, pool.getConnection()];
             case 2:
                 connection = _a.sent();
-                return [4 /*yield*/, connection.query('SELECT * FROM NOTES WHERE id = ?', [noteId])];
+                return [4 /*yield*/, connection.query('SELECT * FROM NOTES WHERE title = ?', [noteTitle])];
             case 3:
                 rows = (_a.sent())[0];
                 connection.release(); // Release connection back to the pool
@@ -144,22 +150,28 @@ app.get('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, voi
         }
     });
 }); });
-// Endpoint to handle PUT requests to update a note by ID
-app.put('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteId, _a, title, content, author, connection, result, error_4;
+// Endpoint to handle PUT requests to update a note by title
+app.put('/notes/title/:title', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteTitle, _a, newTitle, content, author, connection, userRows, result, error_4;
     return __generator(this, function (_b) {
         switch (_b.label) {
             case 0:
-                noteId = req.params.id;
-                _a = req.body, title = _a.title, content = _a.content, author = _a.author;
+                noteTitle = req.params.title;
+                _a = req.body, newTitle = _a.newTitle, content = _a.content, author = _a.author;
                 _b.label = 1;
             case 1:
-                _b.trys.push([1, 4, , 5]);
+                _b.trys.push([1, 5, , 6]);
                 return [4 /*yield*/, pool.getConnection()];
             case 2:
                 connection = _b.sent();
-                return [4 /*yield*/, connection.query('UPDATE NOTES SET title = ?, content = ?, author = ? WHERE id = ?', [title, content, author, noteId])];
+                return [4 /*yield*/, connection.query('SELECT * FROM USERS WHERE username = ?', [author])];
             case 3:
+                userRows = (_b.sent())[0];
+                if (userRows.length === 0) {
+                    return [2 /*return*/, res.status(400).json({ message: "Author '".concat(author, "' does not exist") })];
+                }
+                return [4 /*yield*/, connection.query('UPDATE NOTES SET title = ?, content = ?, author = ? WHERE title = ?', [newTitle, content, author, noteTitle])];
+            case 4:
                 result = (_b.sent())[0];
                 connection.release(); // Release connection back to the pool
                 if (result.affectedRows === 1) {
@@ -168,30 +180,30 @@ app.put('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, voi
                 else {
                     res.status(404).json({ message: 'Note not found or no changes made' });
                 }
-                return [3 /*break*/, 5];
-            case 4:
+                return [3 /*break*/, 6];
+            case 5:
                 error_4 = _b.sent();
                 console.error('Error updating note:', error_4);
                 res.status(500).json({ message: 'Error updating note' });
-                return [3 /*break*/, 5];
-            case 5: return [2 /*return*/];
+                return [3 /*break*/, 6];
+            case 6: return [2 /*return*/];
         }
     });
 }); });
-// Endpoint to handle DELETE requests to delete a note by ID
-app.delete('/notes/:id', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var noteId, connection, result, error_5;
+// Endpoint to handle DELETE requests to delete a note by title
+app.delete('/notes/title/:title', function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
+    var noteTitle, connection, result, error_5;
     return __generator(this, function (_a) {
         switch (_a.label) {
             case 0:
-                noteId = req.params.id;
+                noteTitle = req.params.title;
                 _a.label = 1;
             case 1:
                 _a.trys.push([1, 4, , 5]);
                 return [4 /*yield*/, pool.getConnection()];
             case 2:
                 connection = _a.sent();
-                return [4 /*yield*/, connection.query('DELETE FROM NOTES WHERE id = ?', [noteId])];
+                return [4 /*yield*/, connection.query('DELETE FROM NOTES WHERE title = ?', [noteTitle])];
             case 3:
                 result = (_a.sent())[0];
                 connection.release(); // Release connection back to the pool
