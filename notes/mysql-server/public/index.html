@@ -1,0 +1,46 @@
+<!-- <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="index.js"></script>
+</head>
+<body>
+    <input id="registerEmail" type="text" placeholder="email">
+    <input id="registerUsername" type="text" placeholder="username">
+    <input id="registerPassword" type="text" placeholder="password">
+    <button onclick="register()">Register</button><br>
+
+    <input id="loginEmail" type="text" placeholder="email">
+    <input id="loginPassword" type="text" placeholder="password">
+    <button onclick="login()">Login</button><br>
+
+</body>
+</html> -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <script src="index.js"></script>
+    <link rel="stylesheet" href="index.css">
+</head>
+<body>
+    <div class="register">
+        <input id="registerEmail" type="text" placeholder="email">
+        <input id="registerUsername" type="text" placeholder="username">
+        <input id="registerPassword" type="password" placeholder="password"><br>
+        <button onclick="register()">Sign up</button>
+        <button onclick="changeToLogin()">Already have an account?</button>
+    </div>
+    <div class="login" style="display: none">
+        <input id="loginEmail" type="text" placeholder="email">
+        <input id="loginPassword" type="password" placeholder="password"><br>
+        <button onclick="login()">Submit</button>
+        <button onclick="changeToRegister()">Don't have an account?</button>
+    </div>
+
+</body>
+</html>

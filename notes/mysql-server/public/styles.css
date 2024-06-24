@@ -1,0 +1,210 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #f8f9fa;
+}
+
+header {
+    background-color: #4395e7;
+    color: #fff;
+    padding: 20px;
+    text-align: center;
+    line-height: 1.5;
+    position: relative;
+}
+
+#user-info {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: absolute;
+    top: 0;
+    left: 20px;
+    right: 20px;
+    padding: 10px;
+}
+
+#welcome-message {
+    font-size: 1.2rem;
+}
+
+#logout-btn {
+    background-color: #dc3545;
+    color: #fff;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+#logout-btn:hover {
+    background-color: #c82333;
+}
+
+header h1 {
+    font-size: 2.5rem;
+    font-weight: bold;
+    color: #fff;
+}
+
+#new-note-btn {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 24px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: bold;
+    text-transform: uppercase;
+    transition: background-color 0.3s ease;
+}
+
+#new-note-btn:hover {
+    background-color: #0056b3;
+}
+
+main {
+    padding: 20px;
+}
+
+#notes-container {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(325px, 1fr));
+    gap: 20px;
+    justify-items: center;
+}
+
+.note {
+    background-color: #fff;
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+    position: relative;
+    min-width: 300px;
+    min-height: 200px;
+}
+
+.note:hover {
+    transform: translateY(-5px);
+}
+
+.note h2 {
+    font-size: 1.5rem;
+    text-align: center;
+}
+
+.delete-note-btn,
+.edit-note-btn {
+    position: absolute;
+    bottom: 10px;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    background-color: #dc3545;
+    color: #fff;
+    font-size: 1rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.edit-note-btn {
+    left: 50px;
+    background-color: #007bff;
+}
+
+.delete-note-btn {
+    right: 50px;
+}
+
+.delete-note-btn:hover {
+    background-color: #c82333;
+}
+
+.edit-note-btn:hover {
+    background-color: #0056b3;
+}
+
+footer {
+    background-color: #4395e7;
+    color: #fff;
+    text-align: center;
+    padding: 20px 0;
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    box-shadow: 0 -2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 1;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.4);
+}
+
+.modal-content {
+    background-color: #fff;
+    margin: 10% auto;
+    padding: 30px;
+    border-radius: 10px;
+    width: 80%;
+    max-width: 600px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.2);
+}
+
+.close {
+    color: #aaa;
+    float: right;
+    font-size: 2rem;
+    font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+    color: #555;
+    text-decoration: none;
+    cursor: pointer;
+}
+
+label {
+    margin-bottom: 10px;
+    display: block;
+}
+
+input[type="text"],
+textarea {
+    width: calc(100% - 16px);
+    padding: 10px;
+    margin-bottom: 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    box-sizing: border-box;
+}
+
+button[type="submit"] {
+    background-color: #007bff;
+    color: #fff;
+    padding: 12px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background-color 0.3s ease;
+}
+
+button[type="submit"]:hover {
+    background-color: #0056b3;
+}

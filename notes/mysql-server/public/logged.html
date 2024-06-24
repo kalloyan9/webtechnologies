@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Notes in the Cloud</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <header>
+        <div id="user-info">
+            <span id="welcome-message">Hi, User</span>
+            <button onclick="logout()" id="logout-btn">Logout</button>
+        </div>
+        <h1>Notes App ✏️</h1>
+        <button id="new-note-btn">New Note</button>
+    </header>
+
+    <main>
+        <div id="notes-container">
+            <!-- Note boxes -->
+        </div>
+
+        <!-- Modal for new note or edit note form -->
+        <div id="note-modal" class="modal">
+            <div class="modal-content">
+                <span id="close-modal-btn" class="close">&times;</span>
+                <h2>Note Editor</h2>
+                <form id="edit-note-form">
+                    <label for="note-name">Note Name:</label>
+                    <input type="text" id="note-name" name="note-name" required>
+                    <label for="note-content">Note Content:</label>
+                    <textarea id="note-content" name="note-content" rows="4" required></textarea>
+                    <button type="submit">Save Note</button>
+                </form>
+            </div>
+        </div>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Notes in the Cloud</p>
+    </footer>
+
+    <script src="logged.js"></script>
+</body>
+</html>
