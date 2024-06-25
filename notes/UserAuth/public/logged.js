@@ -1,77 +1,3 @@
-// document.addEventListener("DOMContentLoaded", function() {
-
-//     function setWelcomeMessage(username) {
-//         welcomeMessage.textContent = `Hi, ${username}`;
-//     }
-    
-//     function editNoteButtonHandler(event) {
-//         if (event.target.classList.contains("edit-note-btn")) {
-//             const noteElements = Array.from(document.querySelectorAll(".edit-note-btn"));
-//             const index = noteElements.indexOf(event.target);
-//             editNodeIndex = index;
-
-//             const existingNotes = JSON.parse(localStorage.getItem("notes")) || [];
-//             const existingNote = existingNotes[index];
-            
-//             document.getElementById("note-name").value = existingNote.name;
-//             document.getElementById("note-content").value = existingNote.content;
-            
-//             modal.style.display = "block";
-//         }
-//     }
-
-//     newNoteForm.addEventListener("submit", function(event) {
-//         event.preventDefault();
-
-//         if (editNodeIndex !== null) {
-//             deleteNote(editNodeIndex);
-//         }
-        
-//         const noteName = document.getElementById("note-name").value;
-//         const noteContent = document.getElementById("note-content").value;
-        
-//         const existingNotes = JSON.parse(localStorage.getItem("notes")) || [];
-//         existingNotes.push({ name: noteName, content: noteContent });
-        
-//         localStorage.setItem("notes", JSON.stringify(existingNotes));
-//         closeModal();
-//         displayNotes();
-//     });
-
-//     function closeModal() {
-//         modal.style.display = "none";
-//         editNodeIndex = null;
-//     }
-
-//     newNoteBtn.addEventListener("click", function() {
-//         document.getElementById("note-name").value = "";
-//         document.getElementById("note-content").value = "";
-//         modal.style.display = "block";
-//     });
-
-//     closeModalBtn.addEventListener("click", closeModal);
-
-//     modal.addEventListener("click", function(event) {
-//         if (event.target == modal) {
-//             closeModal();
-//         }
-//     });
-
-//     notesContainer.addEventListener("click", function(event) {
-//         if (event.target.classList.contains("delete-note-btn")) {
-//             deleteNoteButtonHandler(event);
-//         } else if (event.target.classList.contains("edit-note-btn")) {
-//             editNoteButtonHandler(event);
-//         }
-//     });
-
-//     setWelcomeMessage('User');
-
-//     displayNotes();
-// });
-
-
-
 let notesContainer = document.getElementById("notes-container");
 const newNoteBtn = document.getElementById("new-note-btn");
 const closeModalBtn = document.getElementById("close-modal-btn");
@@ -108,7 +34,7 @@ async function displayNotes() {
                 noteBox.classList.add("note");
                 noteBox.innerHTML = `
                     <h2 id="${idx}">${note.title}</h2>
-                    <p>${note.content}</p>
+                    <p class="content">${note.content}</p>
                     <button onclick = "editNote(${idx})" class="edit-note-btn">Edit ✍️</button>
                     <button onclick = "deleteNote(${idx})" class="delete-note-btn">Delete 🙅‍♂️</button>
                 `;
@@ -147,8 +73,23 @@ async function deleteNote(idx) {
 async function editNote(idx) {
     let noteTitleElement = document.getElementById(idx);
     let noteTitle = noteTitleElement.textContent.trim();
-    let newContent = "TODO: NEW CONTENT";
-    console.log("Editing note:", noteTitle);
+
+    document.getElementById("note-name").value = noteTitle;
+    // document.getElementById("note-content").value = noteTitleElement.parentElement.getElementsByClassName("content")[0];
+
+    modal.style.display = "block";
+}
+
+function newNoteFunction() {
+    document.getElementById("note-name").value = "";
+    document.getElementById("note-content").value = "";
+    modal.style.display = "block";
+}
+
+async function submitFunction() {
+    const noteName = document.getElementById("note-name").value;
+    const noteContent = document.getElementById("note-content").value;
+    console.log("submitfunction, name:", noteName, "noteContent:", noteContent);
 
     fetch('http://localhost:3001/api/notes', {
         method: 'PUT',
@@ -158,8 +99,8 @@ async function editNote(idx) {
         body: JSON.stringify(
             {
                 url: '/notes',
-                title: noteTitle,
-                content: newContent
+                title: noteName,
+                content: noteContent
             }
         )
     }).then(res => res.json()).then(data => {
@@ -171,52 +112,11 @@ async function editNote(idx) {
     });
 }
 
-newNoteForm.addEventListener("submit", function(event) {
-    event.preventDefault();
 
-    if (editNodeIndex !== null) {
-        deleteNote(editNodeIndex);
-    }
-    
-    const noteName = document.getElementById("note-name").value;
-    const noteContent = document.getElementById("note-content").value;
-    
-    const existingNotes = JSON.parse(localStorage.getItem("notes")) || [];
-    existingNotes.push({ name: noteName, content: noteContent });
-    
-    localStorage.setItem("notes", JSON.stringify(existingNotes));
-    closeModal();
-    displayNotes();
-});
-
-    // function closeModal() {
-    //     modal.style.display = "none";
-    //     editNodeIndex = null;
-    // }
-
-    // newNoteBtn.addEventListener("click", function() {
-    //     document.getElementById("note-name").value = "";
-    //     document.getElementById("note-content").value = "";
-    //     modal.style.display = "block";
-    // });
-
-    // closeModalBtn.addEventListener("click", closeModal);
-
-    // modal.addEventListener("click", function(event) {
-    //     if (event.target == modal) {
-    //         closeModal();
-    //     }
-    // });
-
-    // notesContainer.addEventListener("click", function(event) {
-    //     if (event.target.classList.contains("delete-note-btn")) {
-    //         deleteNoteButtonHandler(event);
-    //     } else if (event.target.classList.contains("edit-note-btn")) {
-    //         editNoteButtonHandler(event);
-    //     }
-    // });
-
-
+function closeModalFunction() {
+    modal.style.display = "none";
+    editNodeIndex = null;
+}
 
 function logout(){
     fetch('http://localhost:3001/logout', {

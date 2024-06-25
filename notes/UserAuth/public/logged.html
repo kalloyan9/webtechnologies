@@ -13,7 +13,7 @@
             <button onclick="logout()" id="logout-btn">Logout</button>
         </div>
         <h1>Notes App ✏️</h1>
-        <button id="new-note-btn">New Note</button>
+        <button onclick="newNoteFunction()" id="new-note-btn">New Note</button>
     </header>
 
     <main>
@@ -24,14 +24,14 @@
         <!-- Modal for new note or edit note form -->
         <div id="note-modal" class="modal">
             <div class="modal-content">
-                <span id="close-modal-btn" class="close">&times;</span>
+                <span onclick="closeModalFunction()" id="close-modal-btn" class="close">&times;</span>
                 <h2>Note Editor</h2>
                 <form id="edit-note-form">
                     <label for="note-name">Note Name:</label>
                     <input type="text" id="note-name" name="note-name" required>
                     <label for="note-content">Note Content:</label>
                     <textarea id="note-content" name="note-content" rows="4" required></textarea>
-                    <button type="submit">Save Note</button>
+                    <button onclick="submitFunction()">Save Note</button>
                 </form>
             </div>
         </div>
