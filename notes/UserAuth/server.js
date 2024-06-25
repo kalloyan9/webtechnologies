@@ -80,6 +80,28 @@ app.delete('/notes', async (req, res) => {
     res.sendStatus(200); // Send status 200 on successful deletion
 });
 
+app.put('/notes', async (req, res) => {
+    let cookiesSplit = await handleCookies(String(req.headers.cookie));
+    const author = cookiesSplit.username;
+    const { title } = req.body; // Extract title and newContent from req.body
+    const newContent = "sasa";
+    console.log("Changing title:", title, "by author:", author, "with new content:", newContent);
+
+    if (!author || !title) {
+        return res.sendStatus(400); // Bad request if author or title is missing
+    }
+
+    const connection = await pool.getConnection();
+    const [result] = await connection.query(
+        'UPDATE NOTES SET content = ? WHERE title = ? AND author = ?',
+        [newContent, title, author]
+    );
+    connection.release();
+
+    res.sendStatus(200); // Send status 200 on successful deletion
+});
+
+
 function handleCookies(cookiesString){
 
 
