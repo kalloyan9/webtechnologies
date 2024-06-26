@@ -33,6 +33,40 @@ const pool = mysql.createPool({
   queueLimit: 0
 });
 
+async function initializeDatabase() {
+    const poolForInit = mysql.createPool({
+        host: 'localhost',
+        user: 'dev',
+        password: '123',
+      });
+
+    await poolForInit.query(`CREATE DATABASE IF NOT EXISTS mydatabase`);
+    await poolForInit.query(`USE mydatabase`);
+  
+    await poolForInit.query(`
+    CREATE TABLE IF NOT EXISTS USERS (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        username VARCHAR(255) NOT NULL UNIQUE,
+        password VARCHAR(255) NOT NULL,
+        email VARCHAR(255) NOT NULL UNIQUE
+    )
+    `);
+  
+    await poolForInit.query(`
+    CREATE TABLE IF NOT EXISTS NOTES (
+        id INT AUTO_INCREMENT PRIMARY KEY,
+        title VARCHAR(255) NOT NULL,
+        content TEXT NOT NULL,
+        author VARCHAR(255) NOT NULL,
+        FOREIGN KEY (author) REFERENCES USERS(username)
+    )
+    `);
+
+    poolForInit.end();  
+    console.log('Database and tables initialized');
+}
+  
+
 const indexHtml = join(cwd, 'public', 'index.html');
 const loggedHtml = join(cwd, 'public', 'logged.html');
 
@@ -232,4 +266,6 @@ function handleCookies(cookiesString){
    return result;
 }
 
-app.listen(3001)
+initializeDatabase().then(() =>  {
+    app.listen(3001);
+})
